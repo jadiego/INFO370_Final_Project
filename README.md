@@ -1,1 +1,1 @@
-# INFO370_Project_17
+# Informatics 370 Data Science Final Project
