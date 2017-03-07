@@ -9,6 +9,38 @@ library(ggplot2)
 # V401 to V499 – 3rd Wave Survey data 24
 # P1 to P144 – Parent Survey data
 d <- read.dta("data/20520-0001-Data.dta")
+dtsv <- read.csv("data/20520-0001-Data.tsv", sep = "\t")
+
+# How close are you to your culture and country => Feel discrimianted?
+vietnam <- dtsv %>% select(v21, v148, p31,p55, p20, p34) %>% na.omit() %>% filter(v21 == 31)
+hmong <- dtsv %>% select(v21, v148, p31,p55, p20, p34) %>% na.omit() %>% filter(v21 == 34)
+cuba <- dtsv %>% select(v21, v148) %>% na.omit() %>% filter(v21 == 1)
+
+#socioeconomic status of Vietnamese
+ggplot(vietnam,aes(v148)) + geom_histogram(bins = 50)
+
+#socioeconomic status of Hmong
+ggplot(hmong, aes(v148)) + geom_histogram(bins = 50)
+
+#socioecnomic status of Cuba
+ggplot(cuba, aes(v148)) + geom_histogram(bins = 50)
+
+
+
+ggplot(discrimination.sei, aes(x=v148, y= v415e)) + geom_point() + 
+  stat_smooth(method="glm")
+
+#model
+model <- lm(v415e ~ v148, data=discrimination.sei)
+summary(model) # show results
+
+
+ggplot(dat, aes(x=mpg, y=vs)) + geom_point() + 
+  stat_smooth(method="glm", method.args=list(family="binomial"), se=FALSE)
+
+
+#Distribution of race
+ggplot(dtsv, aes(v436)) + geom_histogram()
 
 parent.country <- d %>% drop_na(V9, V15) 
 
@@ -26,9 +58,26 @@ mother.country <- parent.country %>% group_by(V15) %>%
 ############################################################
 ############################################################
 
-
-
 parent.edu.income <- d %>% select(P31, P55, C20, P34) %>% na.omit()
+
+
+hmong.parent.edu.income <- dtsv %>% 
+  select(p31, p55, c20, p34, v21) %>% na.omit() %>% 
+  filter(v21 == 34)
+colnames(hmong.parent.edu.income) <- c("ea", "mi", "english", "work", "no")
+
+write.csv(hmong.parent.edu.income, 
+          file = "parent.edu.income/hmong.parent.edu.income.csv")
+
+
+
+vietnam.parent.edu.income <- dtsv %>% 
+  select(p31, p55, c20, p34, v21) %>% na.omit() %>% 
+  filter(v21 == 31)
+colnames(vietnam.parent.edu.income) <- c("ea", "mi", "english", "work", "no")
+write.csv(vietnam.parent.edu.income, 
+          file = "parent.edu.income/vietnam.parent.edu.income.csv")
+
 
 
 parent.edu.income$P31 <- factor(parent.edu.income$P31,
@@ -72,11 +121,3 @@ immigrant.edu.income$V407 <- factor(immigrant.edu.income$V407,
                                 labels = c(1:10))
 colnames(parent.edu.income) <- c("mi", "ea")
 write.csv(parent.edu.income, file = "parent.edu.income/immigrant.edu.income.csv")
-
-############################################################
-############################################################
-############################################################
-# deprresion vs 
-d1
-
-ggplot()
