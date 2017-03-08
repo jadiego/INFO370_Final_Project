@@ -34,3 +34,4 @@ vignettes/*.pdf
 
 #Large XPT file
 *.XPT
+gh-pages/
